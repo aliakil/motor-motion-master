@@ -1,9 +1,7 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useState } from "react";
-import { useMotors } from "@/context/MotorContext";
+import { useMotors, ScheduleDay } from "@/context/MotorContext";
 import { Button } from "@/components/ui/button";
-import { ScheduleDay } from "@/context/MotorContext";
 
 interface AddMotorDialogProps {
   open: boolean;
@@ -49,10 +47,10 @@ const AddMotorDialog: React.FC<AddMotorDialogProps> = ({ open, onOpenChange }) =
     const newMotor = {
       name,
       zone,
-      status: "Stopped",
+      status: "Stopped" as "Running" | "Stopped" | "Maintenance", // Fix: Explicitly type this as a valid status
       flowRate: 0,
       operatingHours: 0,
-      maintenance: "Good",
+      maintenance: "Good" as "Good" | "Needs Attention" | "Maintenance Required", // Fix: Explicitly type this
       waterPressure: 0,
       isOn: false
     };

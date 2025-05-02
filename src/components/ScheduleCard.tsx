@@ -1,5 +1,4 @@
-
-import { Schedule, useMotors } from "@/context/MotorContext";
+import { Schedule, useMotors, ScheduleDay } from "@/context/MotorContext";
 import { useState } from "react";
 import { Calendar, Clock, Trash2 } from "lucide-react";
 
@@ -20,9 +19,9 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, motorName }) => {
     });
   };
 
-  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const daysOfWeek: ScheduleDay[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   
-  const handleDayToggle = (day) => {
+  const handleDayToggle = (day: ScheduleDay) => {
     if (editedSchedule.days.includes(day)) {
       setEditedSchedule({
         ...editedSchedule,
