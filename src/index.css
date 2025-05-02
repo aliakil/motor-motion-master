@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 142 70% 49%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -33,22 +34,6 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -79,14 +64,6 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -97,5 +74,83 @@
 
   body {
     @apply bg-background text-foreground;
+    max-width: 500px;
+    margin: 0 auto;
   }
+}
+
+.status-pill {
+  @apply rounded-full px-3 py-1 text-sm font-medium;
+}
+
+.status-online {
+  @apply bg-primary-light text-primary;
+}
+
+.status-offline {
+  @apply bg-red-100 text-destructive;
+}
+
+.status-running {
+  @apply bg-primary-light text-running;
+}
+
+.status-stopped {
+  @apply bg-red-100 text-stopped;
+}
+
+.motor-switch {
+  @apply relative inline-flex h-6 w-11 items-center rounded-full;
+}
+
+.motor-switch-bg-on {
+  @apply bg-primary;
+}
+
+.motor-switch-bg-off {
+  @apply bg-gray-300;
+}
+
+.motor-switch-thumb {
+  @apply inline-block h-4 w-4 transform rounded-full bg-white transition;
+}
+
+.motor-switch-thumb-on {
+  @apply translate-x-6;
+}
+
+.motor-switch-thumb-off {
+  @apply translate-x-1;
+}
+
+.system-icon-circle {
+  @apply flex h-16 w-16 items-center justify-center rounded-full;
+}
+
+.water-icon-bg {
+  @apply bg-water;
+}
+
+.battery-icon-bg {
+  @apply bg-battery;
+}
+
+.weather-icon-bg {
+  @apply bg-weather;
+}
+
+.motor-icon-circle {
+  @apply flex h-12 w-12 items-center justify-center rounded-full;
+}
+
+.nav-icon {
+  @apply h-6 w-6;
+}
+
+.progress-bar {
+  @apply h-2 rounded-full bg-gray-200;
+}
+
+.progress-bar-fill {
+  @apply h-full rounded-full bg-primary;
 }
