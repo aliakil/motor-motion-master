@@ -128,15 +128,15 @@
 }
 
 .water-icon-bg {
-  @apply bg-water;
+  @apply bg-blue-100;
 }
 
 .battery-icon-bg {
-  @apply bg-battery;
+  @apply bg-yellow-100;
 }
 
 .weather-icon-bg {
-  @apply bg-weather;
+  @apply bg-orange-100;
 }
 
 .motor-icon-circle {
@@ -154,3 +154,16 @@
 .progress-bar-fill {
   @apply h-full rounded-full bg-primary;
 }
+
+.text-running {
+  @apply text-green-600;
+}
+
+.text-stopped {
+  @apply text-red-600;
+}
+
+.bg-primary-light {
+  @apply bg-green-100;
+}
+

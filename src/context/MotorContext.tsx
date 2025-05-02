@@ -36,7 +36,7 @@ interface MotorContextType {
   motors: Motor[];
   systemStatus: SystemStatus;
   toggleMotor: (id: string) => void;
-  addMotor: (motor: Omit<Motor, "id" | "schedules">) => void;
+  addMotor: (motor: Omit<Motor, "id" | "schedules">) => string;
   updateMotor: (motor: Motor) => void;
   addSchedule: (schedule: Omit<Schedule, "id">) => void;
   updateSchedule: (schedule: Schedule) => void;
@@ -199,13 +199,17 @@ export const MotorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const addMotor = (motor: Omit<Motor, "id" | "schedules">) => {
+    const newMotorId = `M-2025-${String(motors.length + 1).padStart(3, '0')}`;
+    
     const newMotor: Motor = {
       ...motor,
-      id: `M-2025-${String(motors.length + 1).padStart(3, '0')}`,
+      id: newMotorId,
       schedules: []
     };
     
     setMotors(prev => [...prev, newMotor]);
+    
+    return newMotorId;
   };
 
   const updateMotor = (updatedMotor: Motor) => {
