@@ -14,7 +14,7 @@ const daysOfWeek: ScheduleDay[] = [
   "Thursday", "Friday", "Saturday", "Sunday"
 ];
 
-const AddMotorDialog: React.FC<AddMotorDialogProps> = ({ open, onOpenChange }) => {
+const AddMotorDialog = ({ open, onOpenChange }: AddMotorDialogProps) => {
   const { addMotor, addSchedule } = useMotors();
   const [name, setName] = useState("Motor");
   const [zone, setZone] = useState("");
@@ -24,13 +24,10 @@ const AddMotorDialog: React.FC<AddMotorDialogProps> = ({ open, onOpenChange }) =
   const [endTime, setEndTime] = useState("07:00");
   const [repeat, setRepeat] = useState(true);
   
-  const handleDayToggle = (day: ScheduleDay) => {
-    if (selectedDays.includes(day)) {
-      setSelectedDays(selectedDays.filter(d => d !== day));
-    } else {
-      setSelectedDays([...selectedDays, day]);
-    }
-  };
+  const handleDayToggle = (day: ScheduleDay) => 
+    setSelectedDays(prev => 
+      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
+    );
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,27 +42,22 @@ const AddMotorDialog: React.FC<AddMotorDialogProps> = ({ open, onOpenChange }) =
       return;
     }
     
-    const newMotor = {
-      name,
-      zone,
+    const motorId = addMotor({
+      name, zone,
       status: "Stopped" as "Running" | "Stopped" | "Maintenance",
       flowRate: 0,
       operatingHours: 0,
       maintenance: "Good" as "Good" | "Needs Attention" | "Maintenance Required",
-      humidity: 50, // Added the humidity property with a default value of 50%
+      humidity: 50,
       isOn: false
-    };
-    
-    const motorId = addMotor(newMotor);
+    });
     
     if (includeSchedule) {
       addSchedule({
         motorId,
         days: selectedDays,
-        startTime,
-        endTime,
-        repeat,
-        active: true
+        startTime, endTime,
+        repeat, active: true
       });
     }
     
@@ -83,11 +75,6 @@ const AddMotorDialog: React.FC<AddMotorDialogProps> = ({ open, onOpenChange }) =
     setRepeat(true);
   };
   
-  const handleCancel = () => {
-    resetForm();
-    onOpenChange(false);
-  };
-  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -97,13 +84,9 @@ const AddMotorDialog: React.FC<AddMotorDialogProps> = ({ open, onOpenChange }) =
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="motorName" className="block text-sm font-medium mb-2">
-              Motor Name
-            </label>
+            <label htmlFor="motorName" className="block text-sm font-medium mb-2">Motor Name</label>
             <input
-              type="text"
-              id="motorName"
-              value={name}
+              type="text" id="motorName" value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full p-2 border rounded"
               placeholder="Enter motor name"
@@ -111,13 +94,9 @@ const AddMotorDialog: React.FC<AddMotorDialogProps> = ({ open, onOpenChange }) =
           </div>
           
           <div>
-            <label htmlFor="zone" className="block text-sm font-medium mb-2">
-              Zone
-            </label>
+            <label htmlFor="zone" className="block text-sm font-medium mb-2">Zone</label>
             <input
-              type="text"
-              id="zone"
-              value={zone}
+              type="text" id="zone" value={zone}
               onChange={(e) => setZone(e.target.value)}
               className="w-full p-2 border rounded"
               placeholder="Enter zone name"
@@ -127,8 +106,7 @@ const AddMotorDialog: React.FC<AddMotorDialogProps> = ({ open, onOpenChange }) =
           <div className="border-t pt-4">
             <div className="flex items-center mb-4">
               <input
-                type="checkbox"
-                id="includeSchedule"
+                type="checkbox" id="includeSchedule"
                 checked={includeSchedule}
                 onChange={(e) => setIncludeSchedule(e.target.checked)}
                 className="h-4 w-4 text-primary border-gray-300 rounded"
@@ -145,8 +123,7 @@ const AddMotorDialog: React.FC<AddMotorDialogProps> = ({ open, onOpenChange }) =
                   <div className="flex flex-wrap gap-2">
                     {daysOfWeek.map(day => (
                       <button
-                        type="button"
-                        key={day}
+                        type="button" key={day}
                         onClick={() => handleDayToggle(day)}
                         className={`px-3 py-1 text-sm rounded-full ${
                           selectedDays.includes(day) 
@@ -162,26 +139,18 @@ const AddMotorDialog: React.FC<AddMotorDialogProps> = ({ open, onOpenChange }) =
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="startTime" className="block text-sm font-medium mb-2">
-                      Start Time
-                    </label>
+                    <label htmlFor="startTime" className="block text-sm font-medium mb-2">Start Time</label>
                     <input
-                      type="time"
-                      id="startTime"
-                      value={startTime}
+                      type="time" id="startTime" value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
                       className="w-full p-2 border rounded"
                     />
                   </div>
                   
                   <div>
-                    <label htmlFor="endTime" className="block text-sm font-medium mb-2">
-                      End Time
-                    </label>
+                    <label htmlFor="endTime" className="block text-sm font-medium mb-2">End Time</label>
                     <input
-                      type="time"
-                      id="endTime"
-                      value={endTime}
+                      type="time" id="endTime" value={endTime}
                       onChange={(e) => setEndTime(e.target.value)}
                       className="w-full p-2 border rounded"
                     />
@@ -190,15 +159,12 @@ const AddMotorDialog: React.FC<AddMotorDialogProps> = ({ open, onOpenChange }) =
                 
                 <div className="flex items-center">
                   <input
-                    type="checkbox"
-                    id="repeat"
+                    type="checkbox" id="repeat"
                     checked={repeat}
                     onChange={(e) => setRepeat(e.target.checked)}
                     className="h-4 w-4 text-primary border-gray-300 rounded"
                   />
-                  <label htmlFor="repeat" className="ml-2 text-sm">
-                    Repeat weekly
-                  </label>
+                  <label htmlFor="repeat" className="ml-2 text-sm">Repeat weekly</label>
                 </div>
               </div>
             )}
@@ -206,17 +172,12 @@ const AddMotorDialog: React.FC<AddMotorDialogProps> = ({ open, onOpenChange }) =
           
           <DialogFooter className="flex justify-end space-x-3 pt-4">
             <Button 
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
+              type="button" variant="outline"
+              onClick={() => { resetForm(); onOpenChange(false); }}
             >
               Cancel
             </Button>
-            <Button 
-              type="submit"
-            >
-              Add Motor
-            </Button>
+            <Button type="submit">Add Motor</Button>
           </DialogFooter>
         </form>
       </DialogContent>
