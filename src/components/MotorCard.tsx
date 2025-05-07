@@ -1,7 +1,7 @@
 
 import { Motor, useMotors } from "@/context/MotorContext";
 import { Link, useLocation } from "react-router-dom";
-import { Calendar, Humidity } from "lucide-react";
+import { Calendar, Droplet } from "lucide-react";
 
 interface MotorCardProps {
   motor: Motor;
@@ -59,7 +59,7 @@ const MotorCard: React.FC<MotorCardProps> = ({ motor, showScheduleButton = false
         <div className="mb-3">
           <div className="flex justify-between text-sm text-gray-500 mb-1">
             <span className="flex items-center">
-              <Humidity className="h-4 w-4 mr-1 text-purple-500" />
+              <Droplet className="h-4 w-4 mr-1 text-purple-500" />
               Humidity
             </span>
             <span>{motor.humidity}%</span>
