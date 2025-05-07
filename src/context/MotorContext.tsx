@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 export type ScheduleDay = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
@@ -21,14 +20,14 @@ export interface Motor {
   flowRate: number;
   operatingHours: number;
   maintenance: "Good" | "Needs Attention" | "Maintenance Required";
-  waterPressure: number;
+  humidity: number;  // Changed from waterPressure to humidity
   isOn: boolean;
   schedules: Schedule[];
 }
 
 export interface SystemStatus {
   status: "Online" | "Offline";
-  waterFlow: number;
+  waterCapacity: number;  // Changed from waterFlow to waterCapacity as a static value
   weather: string;
 }
 
@@ -54,7 +53,7 @@ const defaultMotors: Motor[] = [
     flowRate: 12.5,
     operatingHours: 128.5,
     maintenance: "Good",
-    waterPressure: 70,
+    humidity: 70,  // Changed from waterPressure to humidity
     isOn: true,
     schedules: [
       {
@@ -76,7 +75,7 @@ const defaultMotors: Motor[] = [
     flowRate: 0,
     operatingHours: 87.2,
     maintenance: "Good",
-    waterPressure: 0,
+    humidity: 45,  // Changed value and property name
     isOn: false,
     schedules: []
   },
@@ -88,7 +87,7 @@ const defaultMotors: Motor[] = [
     flowRate: 0,
     operatingHours: 56.7,
     maintenance: "Needs Attention",
-    waterPressure: 0,
+    humidity: 30,  // Changed value and property name
     isOn: false,
     schedules: []
   },
@@ -100,7 +99,7 @@ const defaultMotors: Motor[] = [
     flowRate: 8.7,
     operatingHours: 92.3,
     maintenance: "Good",
-    waterPressure: 65,
+    humidity: 65,  // Changed from waterPressure to humidity
     isOn: true,
     schedules: []
   },
@@ -112,7 +111,7 @@ const defaultMotors: Motor[] = [
     flowRate: 0,
     operatingHours: 45.1,
     maintenance: "Good",
-    waterPressure: 0,
+    humidity: 25,  // Changed value and property name
     isOn: false,
     schedules: []
   },
@@ -124,7 +123,7 @@ const defaultMotors: Motor[] = [
     flowRate: 0,
     operatingHours: 215.8,
     maintenance: "Maintenance Required",
-    waterPressure: 0,
+    humidity: 10,  // Changed value and property name
     isOn: false,
     schedules: []
   },
@@ -136,7 +135,7 @@ const defaultMotors: Motor[] = [
     flowRate: 0,
     operatingHours: 67.3,
     maintenance: "Good",
-    waterPressure: 0,
+    humidity: 55,  // Changed value and property name
     isOn: false,
     schedules: []
   },
@@ -148,7 +147,7 @@ const defaultMotors: Motor[] = [
     flowRate: 0,
     operatingHours: 103.6,
     maintenance: "Good",
-    waterPressure: 0,
+    humidity: 40,  // Changed value and property name
     isOn: false,
     schedules: []
   }
@@ -156,7 +155,7 @@ const defaultMotors: Motor[] = [
 
 const defaultSystemStatus: SystemStatus = {
   status: "Online",
-  waterFlow: 21.2, // Combined flow rate from all running motors
+  waterCapacity: 75.5,  // Fixed value for water capacity that doesn't change
   weather: "Sunny"
 };
 
@@ -164,17 +163,8 @@ export const MotorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [motors, setMotors] = useState<Motor[]>(defaultMotors);
   const [systemStatus, setSystemStatus] = useState<SystemStatus>(defaultSystemStatus);
 
-  // Update system status based on motors
-  useEffect(() => {
-    const totalFlow = motors
-      .filter(motor => motor.status === "Running")
-      .reduce((sum, motor) => sum + motor.flowRate, 0);
-    
-    setSystemStatus(prev => ({
-      ...prev,
-      waterFlow: totalFlow
-    }));
-  }, [motors]);
+  // No need to update waterCapacity based on motors anymore
+  // As it's now a fixed value that doesn't change when motors are turned on/off
 
   const toggleMotor = (id: string) => {
     setMotors(prevMotors => 
@@ -183,14 +173,13 @@ export const MotorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           const newIsOn = !motor.isOn;
           const newStatus = newIsOn ? "Running" : "Stopped";
           const newFlowRate = newIsOn ? (motor.status === "Maintenance" ? 0 : 12.5) : 0;
-          const newWaterPressure = newIsOn ? (motor.status === "Maintenance" ? 0 : 70) : 0;
+          // Keep humidity unchanged when toggling motor
           
           return {
             ...motor,
             isOn: newIsOn,
             status: motor.status === "Maintenance" ? "Maintenance" : newStatus,
             flowRate: newFlowRate,
-            waterPressure: newWaterPressure
           };
         }
         return motor;

@@ -1,7 +1,7 @@
 
 import { Motor, useMotors } from "@/context/MotorContext";
 import { Link, useLocation } from "react-router-dom";
-import { Calendar } from "lucide-react";
+import { Calendar, Humidity } from "lucide-react";
 
 interface MotorCardProps {
   motor: Motor;
@@ -55,16 +55,19 @@ const MotorCard: React.FC<MotorCardProps> = ({ motor, showScheduleButton = false
         </div>
       </div>
       
-      {motor.status === "Running" && !compact && (
+      {!compact && (
         <div className="mb-3">
           <div className="flex justify-between text-sm text-gray-500 mb-1">
-            <span>Water Capacity</span>
-            <span>{motor.waterPressure}%</span>
+            <span className="flex items-center">
+              <Humidity className="h-4 w-4 mr-1 text-purple-500" />
+              Humidity
+            </span>
+            <span>{motor.humidity}%</span>
           </div>
           <div className="progress-bar">
             <div 
-              className="progress-bar-fill" 
-              style={{ width: `${(motor.waterPressure)}%` }} 
+              className="progress-bar-fill bg-purple-500" 
+              style={{ width: `${motor.humidity}%` }} 
             />
           </div>
         </div>

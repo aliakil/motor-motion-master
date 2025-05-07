@@ -155,6 +155,10 @@
   @apply h-full rounded-full bg-primary;
 }
 
+.bg-humidity {
+  @apply bg-purple-500;
+}
+
 .text-running {
   @apply text-green-600;
 }
@@ -166,4 +170,3 @@
 .bg-primary-light {
   @apply bg-green-100;
 }
-
