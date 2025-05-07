@@ -25,8 +25,8 @@ const SystemStatusCard = () => {
               <path d="M12 2L12 6M12 18L12 22M4.93 4.93L7.76 7.76M16.24 16.24L19.07 19.07M2 12L6 12M18 12L22 12M4.93 19.07L7.76 16.24M18.36 5.64L19.78 4.22" />
             </svg>
           </div>
-          <div className="text-sm mt-2">Water Flow</div>
-          <div className="text-lg font-semibold">{systemStatus.waterFlow.toFixed(1)} L/min</div>
+          <div className="text-sm mt-2">Water Capacity</div>
+          <div className="text-lg font-semibold">{systemStatus.waterFlow.toFixed(1)}%</div>
         </div>
         
         <div className="flex flex-col items-center">

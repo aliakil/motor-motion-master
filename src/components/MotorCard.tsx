@@ -58,8 +58,8 @@ const MotorCard: React.FC<MotorCardProps> = ({ motor, showScheduleButton = false
       {motor.status === "Running" && !compact && (
         <div className="mb-3">
           <div className="flex justify-between text-sm text-gray-500 mb-1">
-            <span>Flow Rate</span>
-            <span>{motor.flowRate.toFixed(1)} L/min</span>
+            <span>Water Capacity</span>
+            <span>{motor.waterPressure}%</span>
           </div>
           <div className="progress-bar">
             <div 

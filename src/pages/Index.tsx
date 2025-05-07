@@ -3,7 +3,6 @@ import { useMotors } from "@/context/MotorContext";
 import Layout from "@/components/Layout";
 import SystemStatusCard from "@/components/SystemStatusCard";
 import MotorCard from "@/components/MotorCard";
-import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -24,16 +23,6 @@ const Index = () => {
         {displayMotors.map(motor => (
           <MotorCard key={motor.id} motor={motor} compact={true} />
         ))}
-      </div>
-      
-      <div className="fixed bottom-20 right-5">
-        <Link
-          to="/motors"
-          className="flex items-center justify-center w-14 h-14 bg-primary rounded-full shadow-lg text-white"
-          aria-label="Add motor"
-        >
-          <Plus className="h-6 w-6" />
-        </Link>
       </div>
     </Layout>
   );

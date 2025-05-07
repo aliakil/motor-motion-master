@@ -1,3 +1,4 @@
+
 import { Schedule, useMotors, ScheduleDay } from "@/context/MotorContext";
 import { useState } from "react";
 import { Calendar, Clock, Trash2 } from "lucide-react";
@@ -53,10 +54,15 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, motorName }) => {
   const dayNames = schedule.days.join(", ");
   
   return (
-    <div className="bg-white rounded-lg shadow mb-4 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
       <div className="p-4">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="font-medium">{motorName}</h3>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <div className="bg-primary/10 p-2 rounded-full mr-3">
+              <Calendar className="h-5 w-5 text-primary" />
+            </div>
+            <h3 className="font-medium text-gray-800">{motorName}</h3>
+          </div>
           <button
             aria-label={`Toggle schedule for ${motorName}`}
             onClick={handleToggleActive}
@@ -68,35 +74,44 @@ const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, motorName }) => {
           </button>
         </div>
         
-        <div className="grid grid-cols-2 gap-y-2 text-sm mb-2">
-          <div className="flex items-center">
-            <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-            <span>{dayNames}</span>
-          </div>
-          
-          <div className="flex items-center">
+        <div className="mt-4 grid grid-cols-2 gap-y-2 text-sm">
+          <div className="flex items-center col-span-2">
             <Clock className="h-4 w-4 mr-2 text-gray-500" />
-            <span>{schedule.startTime} - {schedule.endTime}</span>
+            <span className="font-medium">{schedule.startTime} - {schedule.endTime}</span>
+            <span className="ml-auto text-xs bg-gray-100 px-2 py-1 rounded-full">
+              {schedule.repeat ? 'Repeats weekly' : 'One-time'}
+            </span>
           </div>
           
-          <div className="col-span-2">
-            <span className="text-xs text-gray-500">
-              {schedule.repeat ? 'Repeats weekly' : 'One-time schedule'}
-            </span>
+          <div className="col-span-2 mt-2">
+            <div className="flex flex-wrap gap-1.5">
+              {daysOfWeek.map(day => (
+                <span 
+                  key={day}
+                  className={`text-xs px-2 py-1 rounded-full ${
+                    schedule.days.includes(day)
+                      ? 'bg-primary/20 text-primary'
+                      : 'bg-gray-100 text-gray-400'
+                  }`}
+                >
+                  {day.slice(0, 3)}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
         
-        <div className="flex justify-between items-center mt-2">
+        <div className="flex justify-between items-center mt-4 pt-2 border-t border-gray-100">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-xs text-primary"
+            className="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700"
           >
             {isExpanded ? 'Close' : 'Edit'}
           </button>
           
           <button
             onClick={() => deleteSchedule(schedule.id)}
-            className="text-xs flex items-center text-destructive"
+            className="text-xs flex items-center px-3 py-1.5 bg-red-50 hover:bg-red-100 rounded-full text-destructive"
           >
             <Trash2 className="h-3 w-3 mr-1" />
             Delete

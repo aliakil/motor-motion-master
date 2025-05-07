@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useMotors } from "@/context/MotorContext";
 import Layout from "@/components/Layout";
 import MotorCard from "@/components/MotorCard";
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import AddMotorDialog from "@/components/AddMotorDialog";
 
 const Motors = () => {
@@ -94,22 +94,24 @@ const Motors = () => {
       </div>
       
       {filteredMotors.length > 0 ? (
-        filteredMotors.map(motor => (
-          <MotorCard key={motor.id} motor={motor} showScheduleButton />
-        ))
+        <div className="space-y-4">
+          {filteredMotors.map(motor => (
+            <MotorCard key={motor.id} motor={motor} showScheduleButton />
+          ))}
+        </div>
       ) : (
         <div className="text-center py-8 text-gray-500">
           No motors found matching your criteria
         </div>
       )}
       
-      <div className="fixed bottom-20 right-5">
+      <div className="fixed bottom-20 left-0 right-0 flex justify-center">
         <button
           onClick={() => setIsAddMotorOpen(true)}
-          className="flex items-center justify-center w-14 h-14 bg-primary rounded-full shadow-lg text-white"
+          className="px-6 py-2 bg-primary rounded-full shadow-lg text-white"
           aria-label="Add motor"
         >
-          <Plus className="h-6 w-6" />
+          Add New Motor
         </button>
       </div>
       
