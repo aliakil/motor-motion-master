@@ -3,7 +3,7 @@ import React from 'react';
 import Header from './Header';
 import Navigation from './Navigation';
 import MqttStatus from './MqttStatus';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
   title?: string;
@@ -11,7 +11,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ title, children }) => {
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
   
   return (
     <div className="flex min-h-screen bg-gray-100 text-gray-800">

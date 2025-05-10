@@ -16,7 +16,7 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <Layout hasHeader={false} hasFooter={false}>
+    <Layout>
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
         <h1 className="text-7xl font-bold text-primary mb-4">404</h1>
         <p className="text-xl text-gray-700 mb-8">Oops! Page not found</p>

@@ -4,13 +4,11 @@ import { useMotors } from "@/context/MotorContext";
 import Layout from "@/components/Layout";
 import MotorCard from "@/components/MotorCard";
 import { Search } from "lucide-react";
-import AddMotorDialog from "@/components/AddMotorDialog";
 
 const Motors = () => {
   const { motors } = useMotors();
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
-  const [isAddMotorOpen, setIsAddMotorOpen] = useState(false);
   
   const filterMotors = () => {
     let filtered = motors;
@@ -104,18 +102,6 @@ const Motors = () => {
           No motors found matching your criteria
         </div>
       )}
-      
-      <div className="fixed bottom-20 left-0 right-0 flex justify-center">
-        <button
-          onClick={() => setIsAddMotorOpen(true)}
-          className="px-6 py-2 bg-primary rounded-full shadow-lg text-white"
-          aria-label="Add motor"
-        >
-          Add New Motor
-        </button>
-      </div>
-      
-      <AddMotorDialog open={isAddMotorOpen} onOpenChange={setIsAddMotorOpen} />
     </Layout>
   );
 };
