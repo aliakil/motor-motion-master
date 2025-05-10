@@ -10,6 +10,9 @@ const MqttMotorConnector = () => {
   useEffect(() => {
     // Connect the MQTT service to the motor context
     mqttService.setMotorService(motorHooks);
+    console.log('[MQTT] Connected to motor service');
+    
+    // No cleanup needed as this connection should persist
   }, [mqttService, motorHooks]);
   
   return null; // This component doesn't render anything

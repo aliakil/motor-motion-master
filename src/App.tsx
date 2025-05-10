@@ -17,8 +17,8 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <MqttProvider>
-      <MotorProvider>
+    <MotorProvider>
+      <MqttProvider>
         <MqttMotorConnector />
         <TooltipProvider>
           <Toaster />
@@ -33,8 +33,8 @@ const App = () => (
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
-      </MotorProvider>
-    </MqttProvider>
+      </MqttProvider>
+    </MotorProvider>
   </QueryClientProvider>
 );
 
