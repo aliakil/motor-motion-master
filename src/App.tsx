@@ -12,14 +12,27 @@ import Motors from "./pages/Motors";
 import Schedule from "./pages/Schedule";
 import MotorSchedule from "./pages/MotorSchedule";
 import NotFound from "./pages/NotFound";
+import MqttStatus from "./components/MqttStatus";
 
 const queryClient = new QueryClient();
+
+// MQTT broker configuration - replace with your actual server details
+const MQTT_CONFIG = {
+  brokerUrl: "mqtt://your-mqtt-broker:1883", // Replace with your broker URL
+  username: "your-username",                  // Replace with your username
+  password: "your-password"                   // Replace with your password
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <MotorProvider>
-      <MqttProvider>
+      <MqttProvider 
+        brokerUrl={MQTT_CONFIG.brokerUrl}
+        username={MQTT_CONFIG.username}
+        password={MQTT_CONFIG.password}
+      >
         <MqttMotorConnector />
+        <MqttStatus />
         <TooltipProvider>
           <Toaster />
           <Sonner />

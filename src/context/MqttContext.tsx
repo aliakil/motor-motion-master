@@ -1,14 +1,26 @@
 
-import React, { createContext, useContext, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { useMqttClient } from "@/hooks/useMqttClient";
 import { mqttService } from "@/services/MqttService";
 
 // Create a context for MQTT
 const MqttContext = createContext<typeof mqttService | undefined>(undefined);
 
-export const MqttProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export interface MqttProviderProps {
+  children: React.ReactNode;
+  brokerUrl?: string;
+  username?: string;
+  password?: string;
+}
+
+export const MqttProvider: React.FC<MqttProviderProps> = ({ 
+  children, 
+  brokerUrl,
+  username,
+  password
+}) => {
   // Use our hook that sets up the MQTT connection
-  const mqttClient = useMqttClient();
+  const mqttClient = useMqttClient({ brokerUrl, username, password });
   
   return (
     <MqttContext.Provider value={mqttClient}>

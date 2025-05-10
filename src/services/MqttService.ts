@@ -1,5 +1,6 @@
 
 import { Motor, Schedule } from '@/context/MotorContext';
+import mqtt from 'mqtt';
 
 // Map for day of week number to ScheduleDay
 const dowToScheduleDay = (dow: number): string => {
@@ -16,8 +17,23 @@ interface MotorService {
   toggleMotor: (id: string) => void;
 }
 
+interface MqttConfig {
+  brokerUrl: string;
+  username: string;
+  password: string;
+  clientId: string;
+}
+
 export class MqttService {
   private motorService: MotorService | null = null;
+  private client: mqtt.MqttClient | null = null;
+  private config: MqttConfig = {
+    brokerUrl: '', // Will be set when connect() is called
+    username: '',  // Will be set when connect() is called
+    password: '',  // Will be set when connect() is called
+    clientId: `mqttjs_${Math.random().toString(16).slice(2, 10)}` // Generate a random client ID
+  };
+  private isConnected: boolean = false;
   
   constructor() {
     // This will be initialized when setMotorService is called
@@ -26,17 +42,122 @@ export class MqttService {
   // This should be called after both providers are initialized
   setMotorService(motorService: MotorService) {
     this.motorService = motorService;
-    console.log('[MQTT] Service initialized and connected');
+    console.log('[MQTT] Service initialized and connected to motor service');
     
-    // For demo/development purposes, simulate incoming messages
-    this.simulateMessages();
+    // Subscribe to relevant topics if already connected
+    if (this.isConnected && this.client) {
+      this.setupSubscriptions();
+    }
   }
 
-  connect() {
-    // Just setup MQTT connection here, but don't depend on motorService yet
-    // It will be set separately via setMotorService
+  connect(config?: Partial<MqttConfig>) {
+    // Update configuration if provided
+    if (config) {
+      this.config = { ...this.config, ...config };
+    }
+    
+    // Ensure we have the necessary connection details
+    if (!this.config.brokerUrl) {
+      console.error('[MQTT] Broker URL not provided');
+      return;
+    }
+
+    // Clean up any existing connection
+    if (this.client) {
+      this.disconnect();
+    }
+    
+    console.log(`[MQTT] Connecting to broker: ${this.config.brokerUrl}`);
+
+    // Setup connection options
+    const options: mqtt.IClientOptions = {
+      clientId: this.config.clientId,
+      clean: true,
+      reconnectPeriod: 5000, // Automatic reconnect every 5 seconds
+    };
+
+    // Add authentication if provided
+    if (this.config.username && this.config.password) {
+      options.username = this.config.username;
+      options.password = this.config.password;
+    }
+
+    try {
+      // Create MQTT client
+      this.client = mqtt.connect(this.config.brokerUrl, options);
+      
+      // Set up event handlers
+      this.client.on('connect', this.handleConnect.bind(this));
+      this.client.on('message', this.handleMessage.bind(this));
+      this.client.on('error', this.handleError.bind(this));
+      this.client.on('reconnect', () => console.log('[MQTT] Attempting to reconnect...'));
+      this.client.on('close', () => {
+        console.log('[MQTT] Connection closed');
+        this.isConnected = false;
+      });
+      this.client.on('offline', () => console.log('[MQTT] Client is offline'));
+    } catch (error) {
+      console.error('[MQTT] Connection error:', error);
+    }
   }
-  
+
+  disconnect() {
+    if (this.client) {
+      this.client.end();
+      this.client = null;
+      this.isConnected = false;
+      console.log('[MQTT] Disconnected from broker');
+    }
+  }
+
+  private handleConnect() {
+    console.log('[MQTT] Connected to broker');
+    this.isConnected = true;
+    
+    // Set up subscriptions to relevant topics
+    if (this.client) {
+      this.setupSubscriptions();
+    }
+  }
+
+  private setupSubscriptions() {
+    if (!this.client) return;
+    
+    // Subscribe to topics
+    this.client.subscribe('lights', { qos: 0 });
+    this.client.subscribe('schedule', { qos: 0 });
+    this.client.subscribe('pr', { qos: 0 });
+    
+    console.log('[MQTT] Subscribed to topics: lights, schedule, pr');
+  }
+
+  private handleMessage(topic: string, payload: Buffer) {
+    const message = payload.toString();
+    console.log(`[MQTT] Message received: ${topic} - ${message}`);
+    
+    // Process message using our existing logic
+    this.processMessage(topic, message);
+  }
+
+  private handleError(error: Error) {
+    console.error('[MQTT] Error:', error.message);
+  }
+
+  publish(topic: string, message: string) {
+    if (this.client && this.isConnected) {
+      this.client.publish(topic, message, { qos: 0, retain: false }, (error) => {
+        if (error) {
+          console.error(`[MQTT] Publish error: ${error.message}`);
+        } else {
+          console.log(`[MQTT] Published: ${topic} - ${message}`);
+        }
+      });
+    } else {
+      console.error('[MQTT] Cannot publish: not connected');
+    }
+  }
+
+  // The following methods are kept from the previous implementation
   private handleLightsMessage(payload: string) {
     if (!this.motorService) {
       console.error('[MQTT] Motor service not initialized');
