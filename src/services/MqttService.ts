@@ -1,5 +1,5 @@
 
-import { useMotors } from '@/context/MotorContext';
+import { Motor, Schedule } from '@/context/MotorContext';
 
 // Map for day of week number to ScheduleDay
 const dowToScheduleDay = (dow: number): string => {
@@ -7,37 +7,42 @@ const dowToScheduleDay = (dow: number): string => {
   return dow >= 0 && dow <= 6 ? days[dow] : "Monday";
 };
 
+// Define the interface for motor service
+interface MotorService {
+  motors: Array<Motor>;
+  updateSchedule: (schedule: Schedule) => void;
+  addSchedule: (schedule: Omit<Schedule, "id">) => void;
+  deleteSchedule: (scheduleId: string) => void;
+  toggleMotor: (id: string) => void;
+}
+
 export class MqttService {
-  private motors;
-  private updateSchedule;
-  private addSchedule;
-  private deleteSchedule;
-  private toggleMotor;
+  private motorService: MotorService | null = null;
   
   constructor() {
-    // This will be initialized when connect() is called
-    this.motors = null;
-    this.updateSchedule = null;
-    this.addSchedule = null;
-    this.deleteSchedule = null;
-    this.toggleMotor = null;
+    // This will be initialized when setMotorService is called
   }
 
-  connect(motorHooks: ReturnType<typeof useMotors>) {
-    this.motors = motorHooks.motors;
-    this.updateSchedule = motorHooks.updateSchedule;
-    this.addSchedule = motorHooks.addSchedule;
-    this.deleteSchedule = motorHooks.deleteSchedule;
-    this.toggleMotor = motorHooks.toggleMotor;
-    
-    // Setup MQTT connection and subscriptions here
+  // This should be called after both providers are initialized
+  setMotorService(motorService: MotorService) {
+    this.motorService = motorService;
     console.log('[MQTT] Service initialized and connected');
     
     // For demo/development purposes, simulate incoming messages
     this.simulateMessages();
   }
+
+  connect() {
+    // Just setup MQTT connection here, but don't depend on motorService yet
+    // It will be set separately via setMotorService
+  }
   
   private handleLightsMessage(payload: string) {
+    if (!this.motorService) {
+      console.error('[MQTT] Motor service not initialized');
+      return;
+    }
+    
     const parts = payload.split(',');
     
     if (parts.length !== 2) {
@@ -59,7 +64,7 @@ export class MqttService {
     }
     
     // Find the corresponding motor by index (using motorIndex - 1 to convert to 0-based)
-    const motorId = this.motors[motorIndex - 1]?.id;
+    const motorId = this.motorService.motors[motorIndex - 1]?.id;
     
     if (!motorId) {
       console.error('[MQTT] Motor not found for index:', motorIndex);
@@ -67,12 +72,17 @@ export class MqttService {
     }
     
     // Toggle the motor
-    this.toggleMotor(motorId);
+    this.motorService.toggleMotor(motorId);
     
     console.log(`[MQTT] Motor ${motorIndex} manual -> ${action === 1 ? 'ON' : 'OFF'}`);
   }
   
   private handleScheduleMessage(payload: string) {
+    if (!this.motorService) {
+      console.error('[MQTT] Motor service not initialized');
+      return;
+    }
+    
     const parts = payload.split(',');
     
     if (parts.length !== 8) {
@@ -111,7 +121,7 @@ export class MqttService {
     }
     
     // Find the corresponding motor
-    const motor = this.motors[motorIndex - 1];
+    const motor = this.motorService.motors[motorIndex - 1];
     
     if (!motor) {
       console.error('[MQTT] Motor not found for index:', motorIndex);
@@ -134,7 +144,7 @@ export class MqttService {
       : [dowToScheduleDay(dow)];
     
     // Create new schedule
-    this.addSchedule({
+    this.motorService.addSchedule({
       motorId: motor.id,
       days: days as any, // Type casting since the function returns string but we need ScheduleDay
       startTime: startTime,
@@ -147,6 +157,11 @@ export class MqttService {
   }
   
   private handlePrMessage(payload: string) {
+    if (!this.motorService) {
+      console.error('[MQTT] Motor service not initialized');
+      return;
+    }
+    
     const parts = payload.split(',');
     
     if (parts.length !== 3) {
@@ -168,7 +183,7 @@ export class MqttService {
     }
     
     // Find the motor
-    const motor = this.motors[motorIndex - 1];
+    const motor = this.motorService.motors[motorIndex - 1];
     
     if (!motor) {
       console.error('[MQTT] Motor not found for index:', motorIndex);
@@ -181,7 +196,7 @@ export class MqttService {
     
     if (schedulesToDelete.length >= slot) {
       // Delete the specific schedule at slot-1 (converting to 0-based)
-      this.deleteSchedule(schedulesToDelete[slot-1].id);
+      this.motorService.deleteSchedule(schedulesToDelete[slot-1].id);
       
       console.log(`[MQTT] Motor ${motorIndex} slot ${slot} deleted`);
     } else {
@@ -208,6 +223,8 @@ export class MqttService {
   
   // For development/demo purposes: simulate incoming messages
   private simulateMessages() {
+    if (!this.motorService) return;
+    
     // Simulate turning on motor 3
     setTimeout(() => {
       this.processMessage('lights', '3,1');
