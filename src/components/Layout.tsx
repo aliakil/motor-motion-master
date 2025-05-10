@@ -1,30 +1,33 @@
 
-import { ReactNode } from "react";
-import Header from "./Header";
-import Navigation from "./Navigation";
+import React from 'react';
+import Header from './Header';
+import Navigation from './Navigation';
+import MqttStatus from './MqttStatus';
+import { useMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
-  children: ReactNode;
   title?: string;
-  hasHeader?: boolean;
-  hasFooter?: boolean;
+  children: React.ReactNode;
 }
 
-const Layout: React.FC<LayoutProps> = ({ 
-  children, 
-  title,
-  hasHeader = true, 
-  hasFooter = true 
-}) => {
+const Layout: React.FC<LayoutProps> = ({ title, children }) => {
+  const isMobile = useMobile();
+  
   return (
-    <div className="flex flex-col min-h-screen">
-      {hasHeader && <Header title={title} />}
+    <div className="flex min-h-screen bg-gray-100 text-gray-800">
+      <Navigation />
       
-      <main className="flex-1 p-4 pb-20">
-        {children}
-      </main>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header title={title} />
+        <main className="flex-1 overflow-y-auto px-5 py-6">
+          <div className={isMobile ? '' : 'max-w-5xl mx-auto'}>
+            {children}
+          </div>
+        </main>
+      </div>
       
-      {hasFooter && <Navigation />}
+      {/* MQTT Status Panel */}
+      <MqttStatus />
     </div>
   );
 };

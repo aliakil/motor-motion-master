@@ -20,14 +20,14 @@ export interface Motor {
   flowRate: number;
   operatingHours: number;
   maintenance: "Good" | "Needs Attention" | "Maintenance Required";
-  humidity: number;  // Changed from waterPressure to humidity
+  humidity: number;
   isOn: boolean;
   schedules: Schedule[];
 }
 
 export interface SystemStatus {
   status: "Online" | "Offline";
-  waterCapacity: number;  // Changed from waterFlow to waterCapacity as a static value
+  waterCapacity: number;
   weather: string;
 }
 
@@ -35,7 +35,6 @@ interface MotorContextType {
   motors: Motor[];
   systemStatus: SystemStatus;
   toggleMotor: (id: string) => void;
-  addMotor: (motor: Omit<Motor, "id" | "schedules">) => string;
   updateMotor: (motor: Motor) => void;
   addSchedule: (schedule: Omit<Schedule, "id">) => void;
   updateSchedule: (schedule: Schedule) => void;
@@ -53,7 +52,7 @@ const defaultMotors: Motor[] = [
     flowRate: 12.5,
     operatingHours: 128.5,
     maintenance: "Good",
-    humidity: 70,  // Changed from waterPressure to humidity
+    humidity: 70,
     isOn: true,
     schedules: [
       {
@@ -75,7 +74,7 @@ const defaultMotors: Motor[] = [
     flowRate: 0,
     operatingHours: 87.2,
     maintenance: "Good",
-    humidity: 45,  // Changed value and property name
+    humidity: 45,
     isOn: false,
     schedules: []
   },
@@ -87,7 +86,7 @@ const defaultMotors: Motor[] = [
     flowRate: 0,
     operatingHours: 56.7,
     maintenance: "Needs Attention",
-    humidity: 30,  // Changed value and property name
+    humidity: 30,
     isOn: false,
     schedules: []
   },
@@ -99,7 +98,7 @@ const defaultMotors: Motor[] = [
     flowRate: 8.7,
     operatingHours: 92.3,
     maintenance: "Good",
-    humidity: 65,  // Changed from waterPressure to humidity
+    humidity: 65,
     isOn: true,
     schedules: []
   },
@@ -111,7 +110,7 @@ const defaultMotors: Motor[] = [
     flowRate: 0,
     operatingHours: 45.1,
     maintenance: "Good",
-    humidity: 25,  // Changed value and property name
+    humidity: 25,
     isOn: false,
     schedules: []
   },
@@ -123,7 +122,7 @@ const defaultMotors: Motor[] = [
     flowRate: 0,
     operatingHours: 215.8,
     maintenance: "Maintenance Required",
-    humidity: 10,  // Changed value and property name
+    humidity: 10,
     isOn: false,
     schedules: []
   },
@@ -135,7 +134,7 @@ const defaultMotors: Motor[] = [
     flowRate: 0,
     operatingHours: 67.3,
     maintenance: "Good",
-    humidity: 55,  // Changed value and property name
+    humidity: 55,
     isOn: false,
     schedules: []
   },
@@ -147,7 +146,7 @@ const defaultMotors: Motor[] = [
     flowRate: 0,
     operatingHours: 103.6,
     maintenance: "Good",
-    humidity: 40,  // Changed value and property name
+    humidity: 40,
     isOn: false,
     schedules: []
   }
@@ -155,16 +154,13 @@ const defaultMotors: Motor[] = [
 
 const defaultSystemStatus: SystemStatus = {
   status: "Online",
-  waterCapacity: 75.5,  // Fixed value for water capacity that doesn't change
+  waterCapacity: 75.5,
   weather: "Sunny"
 };
 
 export const MotorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [motors, setMotors] = useState<Motor[]>(defaultMotors);
   const [systemStatus, setSystemStatus] = useState<SystemStatus>(defaultSystemStatus);
-
-  // No need to update waterCapacity based on motors anymore
-  // As it's now a fixed value that doesn't change when motors are turned on/off
 
   const toggleMotor = (id: string) => {
     setMotors(prevMotors => 
@@ -185,20 +181,6 @@ export const MotorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return motor;
       })
     );
-  };
-
-  const addMotor = (motor: Omit<Motor, "id" | "schedules">) => {
-    const newMotorId = `M-2025-${String(motors.length + 1).padStart(3, '0')}`;
-    
-    const newMotor: Motor = {
-      ...motor,
-      id: newMotorId,
-      schedules: []
-    };
-    
-    setMotors(prev => [...prev, newMotor]);
-    
-    return newMotorId;
   };
 
   const updateMotor = (updatedMotor: Motor) => {
@@ -259,7 +241,6 @@ export const MotorProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         motors, 
         systemStatus, 
         toggleMotor, 
-        addMotor,
         updateMotor,
         addSchedule,
         updateSchedule,
